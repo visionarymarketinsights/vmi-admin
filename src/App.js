@@ -27,6 +27,7 @@ import EditPrice from './pages/admin/Price/EditPrice';
 import PriceList from './pages/admin/Price/PriceList';
 import AddPrice from './pages/admin/Price/AddPrice';
 import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
 
 export const notifySuccess = (value) => toast.success(value);
 export const notifyWarning = (value) => toast.warning(value);
@@ -41,7 +42,7 @@ function App() {
         {/* <Header /> */}
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/category/:categoryUrl" element={<AllReport />} />
+          {/* <Route path="/category/:categoryUrl" element={<AllReport />} />
           <Route path="/all-press-release/:categoryUrl" element={<AllPressRelease />} />
           <Route path="/press-release/:pressReleaseUrl" element={<PressRelease />} />
           <Route path="/offering" element={<Offering />} />
@@ -50,7 +51,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/careers" element={<Careers />} />
-          <Route path="/search/:keyword" element={<SearchList />} />
+          <Route path="/search/:keyword" element={<SearchList />} /> */}
           <Route path="/report/add" element={<AddReport />} />
           <Route path="/report/list" element={<ReportList />} />
           <Route path="/report/edit/:reportId" element={<EditReport />} />
@@ -61,6 +62,7 @@ function App() {
           <Route path="/price/list" element={<PriceList />} />
           <Route path="/price/edit/:priceId" element={<EditPrice />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
         <ScrollToTop />
         <ToastContainer
