@@ -1,0 +1,131 @@
+.header-section {
+    @apply py-6 px-4 sm:px-10 md:px-20 lg:px-48
+}
+
+.section {
+    @apply py-12 px-4 sm:px-10 md:px-20 lg:px-48
+}
+
+/* .bg-gradient {
+    background: linear-gradient(45deg, hsla(210, 91%, 39%, 1) 0%, hsla(321, 55%, 50%, 1) 100%);
+} */
+.bg-gradient {
+    /* background: linear-gradient(45deg, hsla(210, 91%, 25%, 1) 15%, hsla(321, 55%, 40%, 1) 85%); */
+
+    background: linear-gradient(135deg, hsla(237, 58%, 13%, 1) 0%, hsla(273, 36%, 35%, 1) 38%, hsla(280, 34%, 43%, 1) 70%, hsla(287, 38%, 54%, 1) 88%, hsla(295, 94%, 76%, 1) 100%);
+}
+
+.html-content {
+    pointer-events: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* .html-content p {
+    margin: 10px 0 !important;
+} */
+
+.html-content td {
+    min-width: 240px;
+}
+
+
+.html-content {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.html-content td,
+.html-content th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.html-content tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.html-content th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #04AA6D;
+    color: white;
+}
+
+.html-content ul {
+    list-style-type: circle;
+    padding: 0 24px 24px 24px;
+}
+
+
+.html-content p img {
+    margin: 24px 0 24px 160px;
+}
+
+@media screen and (max-width:1300px) {
+    .html-content p img {
+        margin: 24px 0;
+    }
+
+    .html-content td {
+        min-width: 50%;
+    }
+}
+
+/* Button Animation Start */
+.codepen-button {
+    display: block;
+    cursor: pointer;
+    color: white;
+    /* margin: 0 auto; */
+    position: relative;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 6px;
+    overflow: hidden;
+    padding: 3px;
+    isolation: isolate;
+  }
+  
+  .codepen-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 400%;
+    height: 100%;
+    background: linear-gradient(115deg,#4fcf70,#fad648,#a767e5,#12bcfe,#44ce7b);
+    background-size: 25% 100%;
+    animation: hover-animate 1s linear infinite;
+    /* animation-play-state: paused; */
+    translate: -5% 0%;
+    transition: translate 0.25s ease-out;
+  }
+  
+  .codepen-button:hover::before {
+    animation-play-state: running;
+    transition-duration: 0.75s;
+    translate: 0% 0%;
+  }
+  
+  @keyframes hover-animate {
+      to {
+      transform: translateX(-25%);
+    }
+  }
+  
+  .codepen-button span {
+    position: relative;
+    display: block;
+    background: #6366F1;
+    /* padding: 0.5rem 1.5rem; */
+    /* font-size: 1.1rem; */
+    border-radius: 3px;
+    height: 100%;
+}
+.codepen-button span:hover {
+    background: #4F46E5;
+}
+/* Button Animation End */
