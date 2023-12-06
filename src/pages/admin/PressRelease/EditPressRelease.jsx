@@ -123,7 +123,7 @@ export default function EditPressRelease() {
                 setValue('meta_keyword', meta_keyword);
                 setValue('pages', pages);
                 setValue('created_date', created_date);
-                // setValue('url', url);
+                setValue('url', url);
                 setUrl(url);
                 setCoverImg(cover_img);
                 if (reportId > 0) {
