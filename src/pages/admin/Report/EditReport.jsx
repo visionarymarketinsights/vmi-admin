@@ -18,8 +18,15 @@ export default function EditReport() {
 
 
 
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editIndex, setEditIndex] = useState(0);
     const [formOpen, setFormOpen] = useState(false);
-    const handleFormOpen = () => setFormOpen(true);
+    const handleFormOpen = () => {
+        setIsEditModalOpen(false)
+        setQuestion('')
+        setAnswer('')
+        setFormOpen(true);
+    };
     const handleFormClose = () => setFormOpen(false);
 
     const [faqList, setFaqList] = useState([]);
@@ -39,6 +46,23 @@ export default function EditReport() {
         getCategories().then(data => {
             setCategories(data)
         });
+    }
+
+    const editFaqModal = (index) => {
+        setIsEditModalOpen(true)
+        setEditIndex(index)
+        setQuestion(faqList[index].question)
+        setAnswer(faqList[index].answer)
+        setFormOpen(true);
+    }
+
+    const editFaq = () => {
+        setIsEditModalOpen(false)
+        faqList.splice(editIndex, 1, {question:question, answer:answer})
+        setFaqList([...faqList]); 
+        setAnswer('')
+        setQuestion('')
+        setFormOpen(false);
     }
 
 
@@ -428,8 +452,14 @@ export default function EditReport() {
                                                 <td className="px-6 py-4">
                                                     {res.answer}
                                                 </td>
-                                                <td className="px-6 py-4">
-
+                                                <td className="flex px-6 py-4">
+                                                    <IconButton onClick={() => editFaqModal(key)}>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-pencil" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="#597e8d" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                            <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+                                                            <path d="M13.5 6.5l4 4" />
+                                                        </svg>
+                                                    </IconButton>
                                                     <IconButton onClick={() => setFaqList(faqList.filter((fval, fkey) => fkey !== key))}>
                                                         <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-trash" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="#597e8d" fill="none" strokeLinecap="round" strokeLinejoin="round">
                                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -474,7 +504,7 @@ export default function EditReport() {
                         <div className=' m-2 py-6 px-6 w-[700px] rounded-md bg-white'>
                             <div className="flex justify-between pb-2 mb-2 text-xl font-semibold text-center">
                                 <div></div>
-                                <div>Add FAQ</div>
+                                <div>{isEditModalOpen ? 'Edit' : 'Add'} FAQ</div>
                                 <svg height={24} width={24} onClick={handleFormClose} className="cursor-pointer" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth={0} /><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" /><g id="SVGRepo_iconCarrier"> <path fillRule="evenodd" clipRule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM8.96963 8.96965C9.26252 8.67676 9.73739 8.67676 10.0303 8.96965L12 10.9393L13.9696 8.96967C14.2625 8.67678 14.7374 8.67678 15.0303 8.96967C15.3232 9.26256 15.3232 9.73744 15.0303 10.0303L13.0606 12L15.0303 13.9696C15.3232 14.2625 15.3232 14.7374 15.0303 15.0303C14.7374 15.3232 14.2625 15.3232 13.9696 15.0303L12 13.0607L10.0303 15.0303C9.73742 15.3232 9.26254 15.3232 8.96965 15.0303C8.67676 14.7374 8.67676 14.2625 8.96965 13.9697L10.9393 12L8.96963 10.0303C8.67673 9.73742 8.67673 9.26254 8.96963 8.96965Z" fill="#1C274C" /> </g></svg>
                             </div>
                             <div>
@@ -488,7 +518,7 @@ export default function EditReport() {
                                         <input type="text" name="answer" id="answer" value={answer} onChange={(e) => setAnswer(e.target.value)} className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Answer" required />
                                     </div>
                                     <div className='flex justify-center'>
-                                        <button type='submit' onClick={addFaq} className="inline-flex items-center justify-center gap-4 px-8 py-2 mt-6 font-semibold text-white transition-all bg-indigo-500 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:ring-offset-2">
+                                        <button type='submit' onClick={isEditModalOpen ? editFaq : addFaq} className="inline-flex items-center justify-center gap-4 px-8 py-2 mt-6 font-semibold text-white transition-all bg-indigo-500 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:ring-offset-2">
                                             Save
                                         </button>
                                     </div>
