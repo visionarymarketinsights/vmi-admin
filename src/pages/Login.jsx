@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { notifySuccess, notifyError } from '../App';
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { apiUrl } from '../constants';
 export default function Login() {
 
     const navigate = useNavigate();
@@ -12,13 +14,26 @@ export default function Login() {
         setValue,
     } = useForm();
     function onSubmit(formData) {
-        console.log(formData, formData.username, formData.password);
-        if (formData.username == 'admin' && formData.password == 'bluesalt') {
-            notifySuccess("Logged In Successfully!");
-            navigate('/dashboard')
-        } else {
-            notifyError('Incorrect username and/or password!');
+
+        const url = `${apiUrl}/login`;
+        axios.post(url, {
+            username: formData.username.trim(),
+            password: formData.password
         }
+            ,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+                notifySuccess("Logged In Successfully!");
+                navigate('/dashboard')
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                notifyError('Something went wrong, please try again!');
+            });
     }
 
 
