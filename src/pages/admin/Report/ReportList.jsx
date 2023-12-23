@@ -17,33 +17,24 @@ export default function ReportList() {
 
 
     const [reportList, setReportList] = useState([]);
+    const [categoryList, setCategoryList] = useState([]);
+    const [categoryId, setCategoryId] = useState(0);
     const [markedId, setMarkedId] = useState(0);
     const [open, setOpen] = useState(false);
     const [page, setPage] = useState(1);
     const [keyword, setKeyword] = useState('');
 
+    useEffect(() => {
+        getAllCategories();
+    }, []);
 
     useEffect(() => {
-        // const getAllReportOnce = () => {
-        //     axios.get(`${apiUrl}/reports/`)
-        //         .then(response => {
-        //             console.log(response);
-        //             let repList = response.data.data.map(res => {
-        //                 res.abr = 'XXX';
-        //                 return res;
-        //             })
-        //             setReportList(repList)
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error);
-        //             notifyError('Something went wrong, please try again!');
-        //         });
-        // }
         getAllReport();
-    }, [page]);
+    }, [page, categoryId]);
 
     const getAllReport = () => {
-        axios.get(`${apiUrl}/reports/search?page=${page}&per_page=200&keyword=${keyword}`)
+        let url = `${apiUrl}/reports/search?page=${page}&per_page=200&keyword=${keyword}${categoryId > 0 ? '&category_id=' + categoryId : ''}`;
+        axios.get(url)
             .then(response => {
                 console.log(response);
                 let repList = response.data.data.map(res => {
@@ -51,6 +42,17 @@ export default function ReportList() {
                     return res;
                 })
                 setReportList(repList)
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                notifyError('Something went wrong, please try again!');
+            });
+    }
+    const getAllCategories = () => {
+        axios.get(`${apiUrl}/category/`)
+            .then(response => {
+                console.log(response.data.data);
+                setCategoryList(response.data.data)
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -92,7 +94,7 @@ export default function ReportList() {
                 <div className='flex items-baseline justify-between pb-4 '>
                     <div className='flex items-center gap-4 text-xl font-semibold'>
                         <div>
-                            Reports
+                            Reports ({reportList.length})
                         </div>
                         <Link to='/report/add'>
                             <svg id="Capa_1" enableBackground="new 0 0 24 24" height={18} viewBox="0 0 24 24" width={18} xmlns="http://www.w3.org/2000/svg"><g id="_x33_"><path d="m18 2c2.206 0 4 1.794 4 4v12c0 2.206-1.794 4-4 4h-12c-2.206 0-4-1.794-4-4v-12c0-2.206 1.794-4 4-4zm0-2h-12c-3.314 0-6 2.686-6 6v12c0 3.314 2.686 6 6 6h12c3.314 0 6-2.686 6-6v-12c0-3.314-2.686-6-6-6z" /></g><g id="_x32_"><path d="m12 18c-.552 0-1-.447-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10c0 .553-.448 1-1 1z" /></g><g id="_x31_"><path d="m6 12c0-.552.447-1 1-1h10c.552 0 1 .448 1 1s-.448 1-1 1h-10c-.553 0-1-.448-1-1z" /></g></svg>
@@ -101,6 +103,14 @@ export default function ReportList() {
                     </div>
                     <div className='flex items-center gap-8 '>
 
+                        <div className='flex items-center gap-2 p-2 border rounded-md border-slate-300'>
+                            <select name="cat" id="catid" value={categoryId} onChange={(e)=>setCategoryId(e.target.value)} className='outline-none w-60'>
+                                <option value={0}>All</option>
+                                {categoryList.map((r, i) => {
+                                    return <option key={i} value={r.id}>{r.name}</option>
+                                })}
+                            </select>
+                        </div>
                         <div className='flex items-center gap-2 p-2 border rounded-md border-slate-300'>
                             <input type="text" placeholder='Search' value={keyword} onChange={(e) => setKeyword(e.target.value)} onKeyDown={(e) => { if (e.key == 'Enter') getAllReport() }} className='outline-none text-slate-500' />
                             <svg id="Capa_1" onClick={getAllReport} enableBackground="new 0 0 512 512" height={18} viewBox="0 0 512 512" width={18} xmlns="http://www.w3.org/2000/svg"><g><g id="layer1_00000072963618680574873660000015406673454742146451_" transform="translate(-201.994 -372.644)"><g id="g18115" transform="translate(200 80)"><path id="path17034" d="m210.785 292.644c-115.018 0-208.79 93.772-208.79 208.79s93.772 208.79 208.79 208.79c48.319 0 92.86-16.566 128.313-44.287l131.212 131.213c9.994 9.992 26.196 9.992 36.19 0 9.992-9.994 9.992-26.196 0-36.19l-131.212-131.212c27.732-35.443 44.337-79.994 44.337-128.313 0-115.018-93.822-208.791-208.84-208.791zm0 51.186c87.355 0 157.655 70.249 157.655 157.605 0 87.355-70.299 157.605-157.655 157.605s-157.606-70.25-157.605-157.605c0-87.356 70.249-157.605 157.605-157.605z" /></g></g></g></svg>
