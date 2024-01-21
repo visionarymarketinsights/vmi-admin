@@ -33,7 +33,7 @@ export default function ReportList() {
     }, [page, categoryId]);
 
     const getAllReport = () => {
-        let url = `${apiUrl}/reports/search?page=${page}&per_page=200&keyword=${keyword}${categoryId > 0 ? '&category_id=' + categoryId : ''}`;
+        let url = `${apiUrl}/reports/search?page=${page}&per_page=2000&keyword=${keyword}${categoryId > 0 ? '&category_id=' + categoryId : ''}`;
         axios.get(url)
             .then(response => {
                 console.log(response);
