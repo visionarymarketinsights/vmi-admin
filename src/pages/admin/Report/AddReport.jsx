@@ -20,11 +20,6 @@ export default function AddReport() {
     const [formOpen, setFormOpen] = useState(false);
     const handleFormOpen = () => setFormOpen(true);
     const handleFormClose = () => setFormOpen(false);
-
-    const [img1, setImg1] = useState('');
-    const [img2, setImg2] = useState('');
-    const [coverImg, setCoverImg] = useState('');
-    // const [methodologyImg, setMethodologyImg] = useState('');
     const [publishDate, setPublishDate] = useState(moment().format('YYYY-MM-DD'));
     const [faqList, setFaqList] = useState([]);
     const [question, setQuestion] = useState('');
@@ -38,50 +33,6 @@ export default function AddReport() {
         setAnswer('')
         handleFormClose();
     }
-
-    const handleFileChange = async (event, type) => {
-        const file = event.target.files[0];
-        console.log('originalFile instanceof Blob', file instanceof Blob); // true
-        console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
-        const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true
-        }
-
-        try {
-            if (file) {
-                const compressedFile = await imageCompression(file, options);
-                console.log('compressedFile instanceof Blob', compressedFile instanceof Blob);
-                console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`);
-
-                // Cloudinary Start
-                const nData = new FormData();
-                nData.append('file', compressedFile)
-                nData.append('upload_preset', 'ml_default')
-                nData.append('cloud_name', 'dlxx8rmpi')
-                axios.post('https://api.cloudinary.com/v1_1/dlxx8rmpi/image/upload', nData).then(res => {
-                    console.log(res)
-                    if (type === 1) {
-                        setImg1(res.data.secure_url);
-                    } else if (type === 2) {
-                        setImg2(res.data.secure_url);
-                    } else if (type === 3) {
-                        setCoverImg(res.data.secure_url);
-                    }
-                    // else {
-                    //     setMethodologyImg(res.data.secure_url);
-                    // }
-                })
-                // Cloudinary End
-
-            }
-        } catch (error) {
-            console.log(error);
-        }
-
-
-    };
 
     const htmlToText = (html) => {
         let temp = document.createElement('div');
@@ -127,11 +78,7 @@ export default function AddReport() {
         const url = `${apiUrl}/reports/`;
         axios.post(url,
             {
-                images: [
-                    { 'img_file': img1, 'img_name': 'RPXXX_1' },
-                    { 'img_file': img2, 'img_name': 'RPXXX_2' },
-                    // { 'img_file': methodologyImg, 'img_name': 'RPXXX_MT1' }
-                ],
+                images: [],
                 report: {
                     ...formData,
                     faqs: JSON.stringify(faqList),
@@ -140,7 +87,7 @@ export default function AddReport() {
                     // methodology: methodology,
                     toc: toc,
                     highlights: highlights,
-                    cover_img: coverImg,
+                    cover_img: "",
                 }
             }
             ,
@@ -211,20 +158,6 @@ export default function AddReport() {
                                 onBlur={newContent => setDescription(newContent)} // preferred to use only this option to update the content for performance reasons
                                 onChange={(newContent) => { setSummary((htmlToText(newContent)).trim()) }}
                             />
-                        </div>
-                        <div className='flex justify-between gap-2'>
-                            <div className="w-full">
-                                <label htmlFor="img1" className='text-sm'>Image 1</label>
-                                <input type="file" onChange={(e) => handleFileChange(e, 1)} name="img1" id="img1" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " />
-                            </div>
-                            <div className="w-full">
-                                <label htmlFor="img2" className='text-sm'>Image 2</label>
-                                <input type="file" onChange={(e) => handleFileChange(e, 2)} name="img2" id="img2" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " />
-                            </div>
-                            <div className="w-full">
-                                <label htmlFor="cover" className='text-sm'>Cover Image</label>
-                                <input type="file" onChange={(e) => handleFileChange(e, 3)} name="cover" id="cover" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " />
-                            </div>
                         </div>
                         <div className="w-full">
                             <label htmlFor="toc" className='text-sm'>Table Of Content</label>

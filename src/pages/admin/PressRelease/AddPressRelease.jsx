@@ -55,7 +55,6 @@ export default function AddPressRelease() {
     const [description, setDescription] = useState('');
     const [summary, setSummary] = useState('');
     const [publishDate, setPublishDate] = useState(moment().format('YYYY-MM-DD'));
-    const [coverImg, setCoverImg] = useState('');
     const [reportName, setReportName] = useState('');
     const [reportList, setReportList] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -75,40 +74,6 @@ export default function AddPressRelease() {
         })
     }
 
-
-    const handleFileChange = async (event) => {
-        const file = event.target.files[0];
-        console.log('originalFile instanceof Blob', file instanceof Blob); // true
-        console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
-        const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true
-        }
-
-        try {
-            if (file) {
-                const compressedFile = await imageCompression(file, options);
-                console.log('compressedFile instanceof Blob', compressedFile instanceof Blob);
-                console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`);
-
-                // Cloudinary Start
-                const nData = new FormData();
-                nData.append('file', compressedFile)
-                nData.append('upload_preset', 'ml_default')
-                nData.append('cloud_name', 'dlxx8rmpi')
-                axios.post('https://api.cloudinary.com/v1_1/dlxx8rmpi/image/upload', nData).then(res => {
-                    console.log(res)
-                    setCoverImg(res.data.secure_url);
-                })
-            }
-        } catch (error) {
-            console.log(error);
-        }
-
-
-    };
-
     function onSubmit(formData) {
         console.log(formData)
         const url = `${apiUrl}/press_release/`;
@@ -123,7 +88,7 @@ export default function AddPressRelease() {
         console.log(
             {
                 ...formData,
-                cover_img: coverImg,
+                cover_img: "",
                 summary: summary,
                 description: description
             }
@@ -131,7 +96,7 @@ export default function AddPressRelease() {
         axios.post(url,
             {
                 ...formData,
-                cover_img: coverImg,
+                cover_img: "",
                 summary: summary,
                 description: description
             }
@@ -171,10 +136,6 @@ export default function AddPressRelease() {
                             <div className="w-full">
                                 <label htmlFor="url" className='text-sm'>Short Title</label>
                                 <input {...register('url')} value={url} onChange={handleUrlChange} type="text" name="url" id="url" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Short Title" required />
-                            </div>
-                            <div className="w-full">
-                                <label htmlFor="cover_img" className='text-sm'>Cover Image</label>
-                                <input type="file" onChange={(e) => handleFileChange(e)} name="cover_img" id="cover_img" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " />
                             </div>
                         </div>
                         <div className="w-full">
