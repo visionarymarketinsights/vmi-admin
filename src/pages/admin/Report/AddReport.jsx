@@ -8,7 +8,6 @@ import "jodit/build/jodit.min.css";
 import { constConfig, apiUrl, getCategories } from '../../../constants';
 import { useNavigate } from "react-router-dom";
 import moment from 'moment/moment';
-import imageCompression from 'browser-image-compression';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import IconButton from '@mui/material/IconButton';
@@ -219,6 +218,26 @@ export default function AddReport() {
                             <div className="w-full">
                                 <label htmlFor="pages" className='text-sm'>Pages</label>
                                 <input {...register('pages')} type="text" name="pages" id="pages" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Pages" required />
+                            </div>
+                        </div>
+                        <div className='flex justify-between gap-2'>
+                            <div className="w-full">
+                                <label htmlFor="single_user_price" className='text-sm'>Single User Price ($)</label>
+                                <input {...register('single_user_price')} type="string" name="single_user_price" id="single_user_price" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Single User Price" required />
+                            </div>
+                            <div className="w-full">
+                                <label htmlFor="multi_user_price" className='text-sm'>Multi User Price ($)</label>
+                                <input {...register('multi_user_price')} type="string" name="multi_user_price" id="multi_user_price" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Multi User Price" required />
+                            </div>
+                        </div>
+                        <div className='flex justify-between gap-2'>
+                            <div className="w-full">
+                                <label htmlFor="corporate_price" className='text-sm'>Corporate Price ($)</label>
+                                <input {...register('corporate_price')} type="string" name="corporate_price" id="corporate_price" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Corporate Price" required />
+                            </div>
+                            <div className="w-full">
+                                <label htmlFor="excel_spreadsheet_price" className='text-sm'>Excel Spreadsheet Price ($)</label>
+                                <input {...register('excel_spreadsheet_price')} type="string" name="excel_spreadsheet_price" id="excel_spreadsheet_price" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Excel Spreadsheet Price" required />
                             </div>
                         </div>
                         <div className="w-full mt-2">

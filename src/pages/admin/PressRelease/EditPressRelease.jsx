@@ -9,10 +9,6 @@ import { constConfig, apiUrl, getCategories } from '../../../constants';
 import { useNavigate, useParams } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import imageCompression from 'browser-image-compression';
-
-
-
 
 export default function EditPressRelease() {
     const htmlToText = (html) => {
@@ -29,11 +25,9 @@ export default function EditPressRelease() {
 
     const [description, setDescription] = useState('');
     const [summary, setSummary] = useState('');
-    const [coverImg, setCoverImg] = useState('');
     const [reportList, setReportList] = useState([]);
     const [reportName, setReportName] = useState('');
     const [reportId, setReportId] = useState(0);
-    const [coverImgView, setCoverImgView] = useState(false);
     const [categories, setCategories] = useState([]);
 
     const config = useMemo(
@@ -42,40 +36,6 @@ export default function EditPressRelease() {
         }),
         []
     );
-
-
-    const handleFileChange = async (event) => {
-        const file = event.target.files[0];
-        console.log('originalFile instanceof Blob', file instanceof Blob); // true
-        console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
-        const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true
-        }
-
-        try {
-            if (file) {
-                const compressedFile = await imageCompression(file, options);
-                console.log('compressedFile instanceof Blob', compressedFile instanceof Blob);
-                console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`);
-
-                // Cloudinary Start
-                const nData = new FormData();
-                nData.append('file', compressedFile)
-                nData.append('upload_preset', 'ml_default')
-                nData.append('cloud_name', 'dlxx8rmpi')
-                axios.post('https://api.cloudinary.com/v1_1/dlxx8rmpi/image/upload', nData).then(res => {
-                    console.log(res)
-                    setCoverImg(res.data.secure_url);
-                })
-            }
-        } catch (error) {
-            console.log(error);
-        }
-
-
-    };
 
 
     const getReportListBySearch = () => {
@@ -115,7 +75,7 @@ export default function EditPressRelease() {
                 // Assuming that pressReleaseData contains fields like description, methodology, toc, and highlights
                 setDescription(pressReleaseData.description);
 
-                const { title, category_id, meta_title, meta_desc, meta_keyword, pages, created_date, url, report_id, cover_img } = pressReleaseData;
+                const { title, category_id, meta_title, meta_desc, meta_keyword, pages, created_date, url, report_id } = pressReleaseData;
                 setValue('title', title);
                 setValue('category_id', category_id);
                 setValue('meta_title', meta_title);
@@ -125,7 +85,6 @@ export default function EditPressRelease() {
                 setValue('created_date', created_date);
                 setValue('url', url);
                 setUrl(url);
-                setCoverImg(cover_img);
                 if (reportId > 0) {
                     setReportId(report_id);
                     getReportByReportId(report_id)
@@ -153,14 +112,13 @@ export default function EditPressRelease() {
         console.log(
             {
                 ...formData,
-                cover_img: coverImg,
                 summary: summary,
                 description: description
             }
         )
         axios.put(`${apiUrl}/press_release/${pressReleaseId}`, {
             ...formData,
-            cover_img: coverImg,
+            cover_img: "",
             id: pressReleaseId,
             summary: summary,
             description: description
@@ -188,8 +146,6 @@ export default function EditPressRelease() {
     return (
         <div>
             <div className="max-w-6xl px-4 py-2 m-6 mx-auto border rounded-md md:py-12 md:pt-8 sm:px-6">
-                {/* <img loading="lazy" src={img1} alt="" />
-                <img loading="lazy" src={img2} alt="" /> */}
                 <div className='pb-4 text-xl font-semibold'>Edit Press Release</div>
                 <form action="#" onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex flex-col gap-2">
@@ -201,20 +157,6 @@ export default function EditPressRelease() {
                             <div className="w-full">
                                 <label htmlFor="url" className='text-sm'>Short Title</label>
                                 <input {...register('url')} value={url} onChange={handleUrlChange} type="text" name="url" id="url" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Short Title" required />
-                            </div>
-                            {/* <div className="w-full">
-                                <label htmlFor="cover_img" className='text-sm'>Cover Image</label>
-                                <input type="file" onChange={(e) => handleFileChange(e, 1)} name="cover_img" id="cover_img" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " />
-                            </div> */}
-                            <div className="relative w-full">
-                                {
-                                    coverImgView &&
-                                    <div className={`absolute overflow-clip shadow-md w-80 bg-white p-4 rounded-md border h-40 flex justify-center items-center left-0 bottom-[100%]`}>
-                                        <img loading="lazy" src={coverImg} alt="cover_img" className='object-contain' />
-                                    </div>
-                                }
-                                <div htmlFor="cover_img" className='text-sm'>Cover <span className={`text-primary underline cursor-pointer ${!coverImg && 'hidden'}`} onMouseEnter={() => setCoverImgView(true)} onMouseLeave={() => setCoverImgView(false)}>Preview</span> </div>
-                                <input type="file" onChange={(e) => handleFileChange(e, 1)} name="cover_img" id="cover_img" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " />
                             </div>
                         </div>
                         <div className="w-full">

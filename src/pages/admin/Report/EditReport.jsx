@@ -64,77 +64,6 @@ export default function EditReport() {
         setQuestion('')
         setFormOpen(false);
     }
-
-
-    const handleFileChange = async (event, type) => {
-        const file = event.target.files[0];
-        console.log('originalFile instanceof Blob', file instanceof Blob); // true
-        console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
-        const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true
-        }
-        try {
-            if (file) {
-                const compressedFile = await imageCompression(file, options);
-                console.log('compressedFile instanceof Blob', compressedFile instanceof Blob);
-                console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`);
-
-                const nData = new FormData();
-                nData.append('file', compressedFile)
-                nData.append('upload_preset', 'ml_default')
-                nData.append('cloud_name', 'dlxx8rmpi')
-                axios.post('https://api.cloudinary.com/v1_1/dlxx8rmpi/image/upload', nData).then(res => {
-                    // console.log(res.secure_url)
-                    if (type === 3) {
-                        setCoverImg(res.data.secure_url);
-                    } else {
-                        updateImage(res.data.secure_url, type);
-                    }
-                })
-
-                // BASE
-                // const reader = new FileReader();
-                // reader.onload = () => {
-                //     const base64 = reader.result;
-                //     updateImage(base64, type);
-                // };
-                // reader.readAsDataURL(compressedFile);
-                // BASE
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const updateImage = (updatedImage, type) => {
-        axios.post(`${apiUrl}/report_images/`, {
-            img_file: updatedImage,
-            img_name: type === 1 ? `RP${reportId}_1` : type === 2 ? `RP${reportId}_2` : `RP${reportId}_MT1`
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => {
-                if (type === 1) {
-                    setImg1(updatedImage)
-                } else if (type === 2) {
-                    setImg2(updatedImage)
-                }
-                // else if (type === 4) {
-                //     setMethodologyImg(updatedImage)
-                // }
-                notifySuccess("Image updated successfully!");
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                notifyError('Something went wrong, please try again!');
-            });
-    }
-
-
     const htmlToText = (html) => {
         let temp = document.createElement('div');
         temp.innerHTML = html;
@@ -158,14 +87,6 @@ export default function EditReport() {
     const [toc, setToc] = useState('');
     const [highlights, setHighlights] = useState('');
     const [summary, setSummary] = useState('');
-    const [img1, setImg1] = useState('');
-    const [img2, setImg2] = useState('');
-    const [coverImg, setCoverImg] = useState('');
-    // const [methodologyImg, setMethodologyImg] = useState('');
-    const [img1View, setImg1View] = useState(false);
-    const [img2View, setImg2View] = useState(false);
-    const [coverImgView, setCoverImgView] = useState(false);
-    // const [methodologyImgView, setMethodologyImgView] = useState(false);
 
     const config = useMemo(
         () => ({
@@ -186,7 +107,7 @@ export default function EditReport() {
                 setToc(reportData.toc);
                 setHighlights(reportData.highlights);
 
-                const { title, category_id, url, meta_title, meta_desc, meta_keyword, pages, created_date, faqs, cover_img } = reportData;
+                const { title, category_id, url, meta_title, meta_desc, meta_keyword, pages, created_date, faqs, single_user_price, multi_user_price, corporate_price, excel_spreadsheet_price} = reportData;
                 setValue('title', title);
                 setValue('category_id', category_id);
                 setValue('url', url);
@@ -196,13 +117,14 @@ export default function EditReport() {
                 setValue('meta_keyword', meta_keyword);
                 setValue('pages', pages);
                 setValue('created_date', created_date);
-                setValue('created_date', created_date);
-                setCoverImg(cover_img);
+                setValue('single_user_price', single_user_price);
+                setValue('multi_user_price', multi_user_price);
+                setValue('corporate_price', corporate_price);
+                setValue('excel_spreadsheet_price', excel_spreadsheet_price);
 
                 if (faqs) {
                     setFaqList(JSON.parse(faqs))
                 }
-                getReportImages();
             })
             .then(() => {
             })
@@ -211,14 +133,6 @@ export default function EditReport() {
                 notifyError('Failed to fetch report data.');
             });
     }, [])
-
-    const getReportImages = () => {
-        axios.get(`${apiUrl}/report_images/RP${reportId}`).then((response) => {
-            setImg1(response.data.data.find(res => res.img_name.includes('_1'))?.img_file || '')
-            setImg2(response.data.data.find(res => res.img_name.includes('_2'))?.img_file || '')
-            // setMethodologyImg(response.data.data.find(res => res.img_name.includes('_MT1'))?.img_file || '')
-        })
-    }
 
 
     const onSubmit = (formData) => {
@@ -235,7 +149,7 @@ export default function EditReport() {
             toc: toc,
             highlights: highlights,
             faqs: JSON.stringify(faqList),
-            cover_img: coverImg,
+            cover_img: "",
         }, {
             headers: {
                 'Content-Type': 'application/json',
@@ -259,30 +173,9 @@ export default function EditReport() {
         setUrl(e.target.value.replace(/\s/g, '-').toLowerCase());
     };
 
-    // const updateCoverImage = (cImg) => {
-    //     axios.put(`${apiUrl}/reports/cover/${reportId}`, {
-    //         id: reportId,
-    //         cover_img: cImg
-    //     }, {
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //     })
-    //         .then(response => {
-    //             setCoverImg(cImg);
-    //             notifySuccess("Cover Image Updated!");
-    //         })
-    //         .catch(error => {
-    //             console.error('Error:', error);
-    //             notifyError('Something went wrong, please try again!');
-    //         });
-    // }
-
     return (
         <div>
             <div className="max-w-6xl px-4 py-2 m-6 mx-auto border rounded-md md:py-12 md:pt-8 sm:px-6">
-                {/* <img loading="lazy" src={img1} alt="" />
-                <img loading="lazy" src={img2} alt="" /> */}
                 <div className='pb-4 text-xl font-semibold'>Edit Report</div>
                 <form action="#" onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex flex-col gap-2">
@@ -322,39 +215,6 @@ export default function EditReport() {
 
 
                         </div>
-
-                        <div className='flex justify-between gap-2'>
-                            <div className="relative w-full">
-                                {
-                                    img1View &&
-                                    <div className={`absolute overflow-clip shadow-md w-80 bg-white p-4 rounded-md border h-40 flex justify-center items-center left-0 bottom-[100%]`}>
-                                        <img loading="lazy" src={img1} alt="img1" className='object-contain' />
-                                    </div>
-                                }
-                                <div htmlFor="img1" className='text-sm'>Image 1 <span className={`text-primary underline cursor-pointer ${!img1 && 'hidden'}`} onMouseEnter={() => setImg1View(true)} onMouseLeave={() => setImg1View(false)}>Preview</span> </div>
-                                <input type="file" onChange={(e) => handleFileChange(e, 1)} name="img1" id="img1" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " />
-                            </div>
-                            <div className="relative w-full">
-                                {
-                                    img2View &&
-                                    <div className={`absolute overflow-clip shadow-md w-80 bg-white p-4 rounded-md border h-40 flex justify-center items-center left-0 bottom-[100%] `}>
-                                        <img loading="lazy" src={img2} alt="img2" className='object-contain' />
-                                    </div>
-                                }
-                                <div htmlFor="img2" className='text-sm'>Image 2 <span className={`text-primary underline cursor-pointer ${!img2 && 'hidden'}`} onMouseEnter={() => setImg2View(true)} onMouseLeave={() => setImg2View(false)}>Preview</span></div>
-                                <input type="file" onChange={(e) => handleFileChange(e, 2)} name="img2" id="img2" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " />
-                            </div>
-                            <div className="relative w-full">
-                                {
-                                    coverImgView &&
-                                    <div className={`absolute overflow-clip shadow-md w-80 bg-white p-4 rounded-md border h-40 flex justify-center items-center left-0 bottom-[100%] `}>
-                                        <img loading="lazy" src={coverImg} alt="coverImg" className='object-contain' />
-                                    </div>
-                                }
-                                <div htmlFor="coverImg" className='text-sm'>Cover Image <span className={`text-primary underline cursor-pointer ${!coverImg && 'hidden'}`} onMouseEnter={() => setCoverImgView(true)} onMouseLeave={() => setCoverImgView(false)}>Preview</span></div>
-                                <input type="file" onChange={(e) => handleFileChange(e, 3)} name="coverImg" id="coverImg" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " />
-                            </div>
-                        </div>
                         <div className="w-full">
                             <label htmlFor="toc" className='text-sm'>Table Of Content</label>
                             {/* <input {...register('toc')} type="text" name="toc" id="toc" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Table Of Content" required /> */}
@@ -380,27 +240,6 @@ export default function EditReport() {
                                 onChange={(newContent) => { console.log(newContent) }}
                             />
                         </div>
-                        {/* <div className="w-full">
-                            <label htmlFor="methodology" className='text-sm'>Methodology</label>
-                            <JoditEditor
-                                ref={methodologyEditor}
-                                value={methodology}
-                                config={config}
-                                tabIndex={1} // tabIndex of textarea
-                                onBlur={newContent => setMethodology(newContent)} // preferred to use only this option to update the content for performance reasons
-                                onChange={(newContent) => { console.log(newContent) }}
-                            />
-                        </div> */}
-                        {/* <div className="relative w-full">
-                            {
-                                methodologyImgView &&
-                                <div className={`absolute overflow-clip shadow-md w-80 bg-white p-4 rounded-md border h-40 flex justify-center items-center left-0 bottom-[100%]`}>
-                                    <img loading="lazy" src={methodologyImg} alt="methodology-img" className='object-contain' />
-                                </div>
-                            }
-                            <div htmlFor="methodology-img" className='text-sm'>Methodology Image <span className={`text-primary underline cursor-pointer ${!methodologyImg && 'hidden'}`} onMouseEnter={() => setMethodologyImgView(true)} onMouseLeave={() => setMethodologyImgView(false)}>Preview</span> </div>
-                            <input type="file" onChange={(e) => handleFileChange(e, 4)} name="methodology-img" id="methodology-img" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " />
-                        </div> */}
                         <div className="w-full">
                             <label htmlFor="meta_title" className='text-sm'>Meta Title</label>
                             <input {...register('meta_title')} type="text" name="meta_title" id="meta_title" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Meta Title" required />
@@ -421,6 +260,27 @@ export default function EditReport() {
                             <div className="w-full">
                                 <label htmlFor="pages" className='text-sm'>Pages</label>
                                 <input {...register('pages')} type="text" name="pages" id="pages" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Pages" required />
+                            </div>
+                        </div>
+                        
+                        <div className='flex justify-between gap-2'>
+                            <div className="w-full">
+                                <label htmlFor="single_user_price" className='text-sm'>Single User Price ($)</label>
+                                <input {...register('single_user_price')} type="string" name="single_user_price" id="single_user_price" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Single User Price" required />
+                            </div>
+                            <div className="w-full">
+                                <label htmlFor="multi_user_price" className='text-sm'>Multi User Price ($)</label>
+                                <input {...register('multi_user_price')} type="string" name="multi_user_price" id="multi_user_price" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Multi User Price" required />
+                            </div>
+                        </div>
+                        <div className='flex justify-between gap-2'>
+                            <div className="w-full">
+                                <label htmlFor="corporate_price" className='text-sm'>Corporate Price ($)</label>
+                                <input {...register('corporate_price')} type="string" name="corporate_price" id="corporate_price" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Corporate Price" required />
+                            </div>
+                            <div className="w-full">
+                                <label htmlFor="excel_spreadsheet_price" className='text-sm'>Excel Spreadsheet Price ($)</label>
+                                <input {...register('excel_spreadsheet_price')} type="string" name="excel_spreadsheet_price" id="excel_spreadsheet_price" className="bg-gray-50 outline-0 border border-gray-300 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5 " placeholder="Excel Spreadsheet Price" required />
                             </div>
                         </div>
                         <div className="w-full mt-2">
