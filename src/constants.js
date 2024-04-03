@@ -93,7 +93,7 @@ export const constConfig =
     ],
     events: {},
     textIcons: false,
-    // uploader: { 'insertImageAsBase64URI': true },
+    uploader: { 'insertImageAsBase64URI': true },
     askBeforePasteFromWord: false,
     hotkeys: {
         redo: 'ctrl+z',
