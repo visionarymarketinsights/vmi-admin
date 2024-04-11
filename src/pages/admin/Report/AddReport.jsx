@@ -43,6 +43,10 @@ export default function AddReport() {
 
     useEffect(() => {
         setValue('pages', '250');
+        setValue('single_user_price', '3700');
+        setValue('multi_user_price', '5700');
+        setValue('corporate_price', '7700');
+        setValue('excel_spreadsheet_price', '1800');
         getCategoryList()
     }, [])
 
