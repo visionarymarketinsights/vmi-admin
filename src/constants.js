@@ -2,7 +2,8 @@ import axios from "axios"
 
 // export const apiUrl = 'http://localhost:8000'
 // export const apiUrl = 'https://congapi.178765.xyz'
-export const apiUrl = 'https://railwayfastapi.onrender.com'
+// export const apiUrl = 'https://railwayfastapi.onrender.com'
+export const apiUrl = 'https://visionarynextjs-fastapi.7c2g7o.easypanel.host'
 
 export const reCaptchaKey = '6Ldr4ucoAAAAAKwW2FX-bCJIo6YHztxzf97Y_Tl8'
 
