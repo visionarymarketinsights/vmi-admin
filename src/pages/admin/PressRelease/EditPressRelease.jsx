@@ -5,7 +5,7 @@ import axios from 'axios';
 import JoditEditor from 'jodit-react';
 import "jodit";
 import "jodit/build/jodit.min.css";
-import { constConfig, apiUrl, getCategories } from '../../../constants';
+import { constConfig, apiUrl, getNewsRoomCategories } from '../../../constants';
 import { useNavigate, useParams } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -61,14 +61,14 @@ export default function EditPressRelease() {
             })
     }
 
-    const getCategoryList = () => {
-        getCategories().then(data => {
+    const getNewsRoomCategoriesList = () => {
+        getNewsRoomCategories().then(data => {
             setCategories(data)
         });
     }
 
     useEffect(() => {
-        getCategoryList();
+        getNewsRoomCategoriesList();
         axios.get(`${apiUrl}/press_release/${pressReleaseId}`)
             .then(response => {
                 const pressReleaseData = response.data.data;

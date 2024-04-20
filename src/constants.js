@@ -122,6 +122,17 @@ export const getCategories = async () => {
     }
 }
 
+export const getNewsRoomCategories = async () => {
+    if (localStorage.getItem('news_room_category_list')) {
+        return JSON.parse(localStorage.getItem('news_room_category_list'));
+    } else {
+        return await axios.get(`${apiUrl}/news_room_category/`).then(res => {
+            localStorage.setItem('news_room_category_list', JSON.stringify(res.data.data))
+            return res.data.data
+        })
+    }
+}
+
 export const toCapitalCase = (val) => {
     return val.split('-').map(res => res[0]?.toUpperCase() + res.slice(1)).join(' ')
 }

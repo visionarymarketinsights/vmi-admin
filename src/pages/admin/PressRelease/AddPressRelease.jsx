@@ -23,15 +23,15 @@ export default function AddPressRelease() {
     }
 
 
-    const getCategoryList = () => {
-        getCategories().then(data => {
+    const getNewsRoomCategories = () => {
+        getNewsRoomCategories().then(data => {
             setCategories(data)
         });
     }
 
 
     useEffect(() => {
-        getCategoryList();
+        getNewsRoomCategories();
         setValue('pages', '250');
     }, [])
 

@@ -141,7 +141,7 @@ export default function ReportList() {
                                 return (
                                     <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                         <td className="px-6 py-4">
-                                            CGNRP{res.abr}{res.id}
+                                        VMIRP{res.abr}{res.id}
                                         </td>
                                         <td className="px-6 py-4">
                                             {res.category_name}

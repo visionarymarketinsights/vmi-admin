@@ -135,7 +135,7 @@ export default function PressReleaseList() {
                                 return (
                                     <tr key={key} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                         <td className="px-6 py-4">
-                                            CGNPR{res.abr}{res.id}
+                                            VMIPR{res.abr}{res.id}
                                         </td>
                                         <td className="px-6 py-4">
                                             {res.category_name}
