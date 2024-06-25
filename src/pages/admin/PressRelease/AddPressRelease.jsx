@@ -5,7 +5,7 @@ import axios from 'axios';
 import JoditEditor from 'jodit-react';
 import "jodit";
 import "jodit/build/jodit.min.css";
-import { constConfig, apiUrl, getCategories } from '../../../constants';
+import { constConfig, apiUrl, getNewsRoomCategories } from '../../../constants';
 import { useNavigate } from "react-router-dom";
 import moment from 'moment/moment';
 import TextField from '@mui/material/TextField';
@@ -23,7 +23,7 @@ export default function AddPressRelease() {
     }
 
 
-    const getNewsRoomCategories = () => {
+    const getCategories = () => {
         getNewsRoomCategories().then(data => {
             setCategories(data)
         });
@@ -31,7 +31,7 @@ export default function AddPressRelease() {
 
 
     useEffect(() => {
-        getNewsRoomCategories();
+        getCategories();
         setValue('pages', '250');
     }, [])
 
